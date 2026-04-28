@@ -32,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
             val pass = password.text.toString()
 
             if (user.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Fills all fields", Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch {
                     db.userDao().insert(User(0, user, pass))
