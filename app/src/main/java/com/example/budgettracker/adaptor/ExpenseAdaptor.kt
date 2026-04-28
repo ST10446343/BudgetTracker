@@ -24,7 +24,12 @@ class ExpenseAdaptor(private var expenses: List<Expense>) :
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
         val expense = expenses[position]
-        holder.txtExpense.text = "Amounts: R${expense.amount}\nDecsription: ${expense.description}\nDate: ${expense.date}"
+        holder.txtExpense.text =
+            "💰 R${expense.amount}\n" +
+                    "📂 ${expense.category}\n" +
+                    "📅 ${expense.date}\n" +
+                    "⏰ ${expense.startTime} - ${expense.endTime}\n" +
+                    "📝 ${expense.description}"
     }
 
     override fun getItemCount(): Int {

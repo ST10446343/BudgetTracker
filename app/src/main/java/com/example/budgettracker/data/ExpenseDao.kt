@@ -12,4 +12,7 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expenses")
     suspend fun getAll(): List<Expense>
+
+    @Query("SELECT SUM(amount) FROM expenses WHERE category = :category")
+    suspend fun getTotalByCategory(category: String): Double?
 }
