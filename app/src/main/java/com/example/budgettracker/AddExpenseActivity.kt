@@ -14,6 +14,7 @@ import androidx.room.Room
 import com.example.budgettracker.data.AppDatabase
 import com.example.budgettracker.data.Expense
 import kotlinx.coroutines.launch
+import android.content.Intent
 
 class AddExpenseActivity : AppCompatActivity() {
 
@@ -41,6 +42,8 @@ class AddExpenseActivity : AppCompatActivity() {
         val searchCategory = findViewById<EditText>(R.id.etSearchCategory)
         val totalBtn = findViewById<Button>(R.id.btnTotal)
         val txtTotal = findViewById<TextView>(R.id.txtTotal)
+        val txtStatus = findViewById<TextView>(R.id.txtStatus)
+        val txtBadge = findViewById<TextView>(R.id.txtBadge)
 
         saveBtn.setOnClickListener {
             val amt = amount.text.toString().trim()
@@ -80,20 +83,69 @@ class AddExpenseActivity : AppCompatActivity() {
             }
         }
 
+        val btnGraph = findViewById<Button>(R.id.btnGraph)
+
+        btnGraph.setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    GraphActivity::class.java
+                )
+            )
+        }
+
         totalBtn.setOnClickListener {
+
             val cat = searchCategory.text.toString().trim()
 
             if (cat.isEmpty()) {
-                Toast.makeText(this, "Enter a category", Toast.LENGTH_SHORT).show()
-            } else {
-                lifecycleScope.launch {
-                    val total = db.expenseDao().getTotalByCategory(cat) ?: 0.0
 
-                    val min = minGoal.text.toString()
-                    val max = maxGoal.text.toString()
+                Toast.makeText(
+                    this,
+                    "Enter a category",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } else {
+
+                lifecycleScope.launch {
+
+                    val total =
+                        db.expenseDao().getTotalByCategory(cat) ?: 0.0
+
+                    val minGoalValue =
+                        minGoal.text.toString().toDoubleOrNull() ?: 0.0
+
+                    val maxGoalValue =
+                        maxGoal.text.toString().toDoubleOrNull() ?: 0.0
 
                     txtTotal.text =
-                        "Total spent on $cat: R$total\nMinimum goal: R$min\nMaximum goal: R$max"
+                        "Total spent on $cat: R$total"
+
+                    if (total < minGoalValue) {
+
+                        txtStatus.text =
+                            "⚠ Below Minimum Goal"
+
+                        txtBadge.text =
+                            "Keep Saving"
+
+                    } else if (total <= maxGoalValue) {
+
+                        txtStatus.text =
+                            "✅ Within Goal Range"
+
+                        txtBadge.text =
+                            "🏆 Budget Champion"
+
+                    } else {
+
+                        txtStatus.text =
+                            "❌ Above Maximum Goal"
+
+                        txtBadge.text =
+                            "⚠ Budget Warning"
+                    }
                 }
             }
         }
